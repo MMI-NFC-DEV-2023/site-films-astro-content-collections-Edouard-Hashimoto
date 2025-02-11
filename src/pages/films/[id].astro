@@ -1,7 +1,6 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import { getEntry, getEntries } from "astro:content";
-import { getCollection, render } from "astro:content";
+import { getEntry, getEntries, getCollection, render } from "astro:content";
 import { formatDate } from "src/helpers";
 // 1. Génére un nouveau chemin pour chaque entrée de collection
 export async function getStaticPaths() {
@@ -18,22 +17,51 @@ const { Content } = await render(film);
 const realisateur =
   film.data.realisateur && (await getEntry(film.data.realisateur));
 
-  const scenaristes =
+const scenaristes =
   film.data.scenaristes && (await getEntries(film.data.scenaristes));
 
+const roles =
+  film.data.roles &&
+  (await Promise.all(
+    film.data.roles.map(async ({ role, acteur }) => ({
+      role,
+      acteur: await getEntry(acteur),
+    }))
+  ));
 ---
 
 <Layout pageTitle={`Fiche du film ${film.data.titre}`}>
   <h1>{film.data.titre}</h1>
   <p>Date de sortie : {formatDate(film.data.dateSortie)}</p>
   {realisateur && <p>Réalisateur : {realisateur.data.nom}</p>}
-  {scenaristes && (
-    <p>
-        Scénaristes : {scenaristes.length > 1
-            ? scenaristes.map(s => s.data.nom).slice(0, -1).join(', ') + ' et ' + scenaristes.map(s => s.data.nom).slice(-1)
-            : scenaristes[0].data.nom}
-    </p>
-)}
+  {
+    scenaristes && (
+      <p>
+        Scénariste{scenaristes.length > 1 && <>s</>} :
+        {scenaristes
+          .map((s) => s.data.nom)
+          .join(", ")
+          .replace(/, ([^,]*)$/, " et $1")}
+      </p>
+    )
+  }
+
+  {
+    roles &&(
+      <>
+        <h2>Acteurs</h2>
+        <ul>
+          {roles.map(({ role, acteur }) => (
+            <li>
+              <strong>{role}</strong>  {acteur && <>: <a href={`/personnes/${acteur.id}`}>{acteur.data.nom}</a></>}
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+
+
   <div class="prose">
     <Content />
   </div>

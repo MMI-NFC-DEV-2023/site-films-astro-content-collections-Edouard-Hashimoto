@@ -6,4 +6,13 @@ scenaristes:
 - ethan-schmitt
 - christopher-nolan
 - mel-gibson
+roles:
+  - acteur: leonardo-dicaprio
+    role: Dom Cobb
+  - acteur: joseph-gordon-levitt
+    role: Arthur
+  - acteur: ellen-page
+    role: Ariadne
+  - acteur: tom-hardy
+    role: Eames
 ---
