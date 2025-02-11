@@ -1,0 +1,25 @@
+---
+import { getCollection, render } from 'astro:content';
+import { formatDate } from '../../helpers'
+import Layout from '@layouts/Layout.astro';
+// 1. Génére un nouveau chemin pour chaque entrée de collection
+export async function getStaticPaths() {
+  const films = await getCollection('films');
+  return films.map((films) => ({
+    params: { id: films.id },
+    props: { films },
+  }));
+}
+// 2. Pour votre modèle, vous pouvez obtenir l'entrée directement à partir de la propriété
+const { films } = Astro.props;
+const { Content } = await render(films);
+---
+
+<Layout pageTitle={`Fiche de ${films.data.titre}`}>
+<h1>{films.data.titre}</h1>
+<p>Date de sortie: {formatDate(films.data.dateSortie)}</p>
+
+<div class="prose">
+<Content />
+</div>
+</Layout>

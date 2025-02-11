@@ -1,5 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { formatDate } from '../../helpers'
+import Layout from '@layouts/Layout.astro';
 // 1. Génére un nouveau chemin pour chaque entrée de collection
 export async function getStaticPaths() {
   const personnes = await getCollection('personne');
@@ -12,9 +14,22 @@ export async function getStaticPaths() {
 const { personne } = Astro.props;
 const { Content } = await render(personne);
 ---
+
+<Layout pageTitle={`Fiche de ${personne.data.nom}`}>
 <h1>{personne.data.nom}</h1>
 <p>Nationalité : {personne.data.nationalite}</p>
-<p>Date de naissance : {personne.data.dateNaissance}</p>
+<p>Date de naissance : {formatDate(personne.data.dateNaissance)}</p>
 <p>Lieu de naissance : {personne.data.lieuNaissance}</p>
-{personne.data.dateDeces && <p>Date de décès : {personne.data.dateDeces}</p>}
+{personne.data.dateDeces && <p>Date de décès : {formatDate(personne.data.dateDeces)}</p>}
+{personne.data.profession && (
+  <p>
+    Profession{personne.data.profession.length > 1 && <>s</>} :{' '}
+    {personne.data.profession.length > 1
+      ? personne.data.profession.slice(0, -1).join(', ') + ' et ' + personne.data.profession.slice(-1)
+      : personne.data.profession[0]}
+  </p>
+)}
+<div class="prose">
 <Content />
+</div>
+</Layout>
