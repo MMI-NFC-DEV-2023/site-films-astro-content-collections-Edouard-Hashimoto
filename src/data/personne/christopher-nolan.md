@@ -1,15 +1,14 @@
 ---
 nom: Christopher Nolan
 lieuNaissance: Londres
-dateNaissance: 1970-07-30
-nationalite: UK
+dateNaissance: 2004-11-15
+nationalite: US
 profession:
+  - acteur
   - realisateur
-  - scenariste
+  - producteur
 ---
 
-# Biographie de Christopher Nolan
 
-- réalisateur
-- scénariste
-- producteur
+# Biographie de Ethan Schmitt
+

@@ -21,6 +21,7 @@ const films = defineCollection({
     titre: z.string(),
     dateSortie: z.date(),
     realisateur: reference("personne").optional(),
+    scenaristes: z.array(reference("personne")).optional(),
   }),
 });
 
