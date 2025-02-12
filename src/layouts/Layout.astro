@@ -4,7 +4,7 @@ import "./src/styles/global.css";
 interface Props {
     pageTitle: string;
 }
-const {pageTitle} = Astro.props
+const { pageTitle } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -14,20 +14,37 @@ const {pageTitle} = Astro.props
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{pageTitle}</title>
 </head>
-<body>
-    <nav>
-        <ul>
-            <li>
-                <a href="/">Accueil</a>
-            </li>
-            <li>
-                <a href="/personnes">Personne</a>
-            </li>
-            <li>
-                <a href="/films">Films</a>
-            </li>
-        </ul>
-    </nav>
-    <slot />
+<body class="bg-gray-100 text-gray-900">
+    <div class="max-w-4xl mx-auto px-4 py-6">
+        <nav class="mb-6">
+            <ul class="list-none flex space-x-4">
+                <li>
+                    <a 
+                      href="/" 
+                      class="text-blue-600 hover:underline font-medium">
+                      Accueil
+                    </a>
+                </li>
+                <li>
+                    <a 
+                      href="/personnes" 
+                      class="text-blue-600 hover:underline font-medium">
+                      Personne
+                    </a>
+                </li>
+                <li>
+                    <a 
+                      href="/films" 
+                      class="text-blue-600 hover:underline font-medium">
+                      Films
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main>
+            <slot />
+        </main>
+    </div>
 </body>
 </html>

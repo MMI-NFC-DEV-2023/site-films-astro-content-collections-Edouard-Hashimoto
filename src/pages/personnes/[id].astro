@@ -1,8 +1,11 @@
 ---
 import { getCollection, render } from 'astro:content';
-import { formatDate } from '../../helpers'
+import { formatDate } from '../../helpers';
 import Layout from '@layouts/Layout.astro';
-// 1. Génére un nouveau chemin pour chaque entrée de collection
+import LinkFilm from '@components/LinkFilm.astro';
+import ListeLinkFilm from '@components/ListeLinkFilm.astro';
+
+// 1. Génère un nouveau chemin pour chaque entrée de collection
 export async function getStaticPaths() {
   const personnes = await getCollection('personne');
   return personnes.map((personne) => ({
@@ -10,26 +13,50 @@ export async function getStaticPaths() {
     props: { personne },
   }));
 }
+
 // 2. Pour votre modèle, vous pouvez obtenir l'entrée directement à partir de la propriété
 const { personne } = Astro.props;
 const { Content } = await render(personne);
+
+const filmsRealisateur = [
+  ...(await getCollection('films'))
+].filter(film => film.data?.realisateur?.id === personne.id);
+
 ---
 
 <Layout pageTitle={`Fiche de ${personne.data.nom}`}>
-<h1>{personne.data.nom}</h1>
-<p>Nationalité : {personne.data.nationalite}</p>
-<p>Date de naissance : {formatDate(personne.data.dateNaissance)}</p>
-<p>Lieu de naissance : {personne.data.lieuNaissance}</p>
-{personne.data.dateDeces && <p>Date de décès : {formatDate(personne.data.dateDeces)}</p>}
-{personne.data.profession && (
-  <p>
-    Profession{personne.data.profession.length > 1 && <>s</>} :{' '}
-    {personne.data.profession.length > 1
-      ? personne.data.profession.slice(0, -1).join(', ') + ' et ' + personne.data.profession.slice(-1)
-      : personne.data.profession[0]}
-  </p>
-)}
-<div class="prose">
-<Content />
-</div>
+  <div class="max-w-4xl mx-auto px-4 py-6">
+    <header class="mb-6">
+      <h1 class="text-3xl font-bold mb-4">{personne.data.nom}</h1>
+    </header>
+
+    <div class="space-y-4">
+      <p><strong>Nationalité :</strong> {personne.data.nationalite}</p>
+      <p><strong>Date de naissance :</strong> {formatDate(personne.data.dateNaissance)}</p>
+      <p><strong>Lieu de naissance :</strong> {personne.data.lieuNaissance}</p>
+      {personne.data.dateDeces && (
+        <p><strong>Date de décès :</strong> {formatDate(personne.data.dateDeces)}</p>
+      )}
+      {personne.data.profession && (
+        <p>
+          <strong>Profession{personne.data.profession.length > 1 ? 's' : ''} :</strong> {
+            personne.data.profession.length > 1
+              ? personne.data.profession.slice(0, -1).join(', ') + ' et ' + personne.data.profession.slice(-1)
+              : personne.data.profession[0]
+          }
+        </p>
+      )}
+    </div>
+
+    {filmsRealisateur.length > 0 && (
+      <section class="mt-6">
+        <h2 class="text-2xl font-semibold mb-4">Films réalisés</h2>
+        <ListeLinkFilm films={filmsRealisateur} />
+      </section>
+    )}
+
+    <section class="prose max-w-none mt-6">
+      <Content />
+    </section>
+  </div>
 </Layout>

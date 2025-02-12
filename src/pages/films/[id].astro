@@ -1,7 +1,9 @@
 ---
+import LinkPersonne from "@components/LinkPersonne.astro";
 import Layout from "@layouts/Layout.astro";
 import { getEntry, getEntries, getCollection, render } from "astro:content";
 import { formatDate } from "src/helpers";
+
 // 1. Génére un nouveau chemin pour chaque entrée de collection
 export async function getStaticPaths() {
   const films = await getCollection("films");
@@ -10,6 +12,7 @@ export async function getStaticPaths() {
     props: { film },
   }));
 }
+
 // 2. Pour votre modèle, vous pouvez obtenir l'entrée directement à partir de la propriété
 const { film } = Astro.props;
 const { Content } = await render(film);
@@ -30,39 +33,57 @@ const roles =
   ));
 ---
 
-<Layout pageTitle={`Fiche du film ${film.data.titre}`}>
-  <h1>{film.data.titre}</h1>
-  <p>Date de sortie : {formatDate(film.data.dateSortie)}</p>
-  {realisateur && <p>Réalisateur : {realisateur.data.nom}</p>}
-  {
-    scenaristes && (
-      <p>
-        Scénariste{scenaristes.length > 1 && <>s</>} :
-        {scenaristes
-          .map((s) => s.data.nom)
-          .join(", ")
-          .replace(/, ([^,]*)$/, " et $1")}
-      </p>
-    )
-  }
+<Layout pageTitle={`Fiche du film : ${film.data.titre}`}>
+  <div class="max-w-4xl mx-auto px-4 py-6">
+    <header class="mb-6">
+      <h1 class="text-3xl font-bold mb-2">{film.data.titre}</h1>
+      <p class="text-gray-600">Date de sortie : {formatDate(film.data.dateSortie)}</p>
+    </header>
 
-  {
-    roles &&(
-      <>
-        <h2>Acteurs</h2>
-        <ul>
-          {roles.map(({ role, acteur }) => (
+    {realisateur && (
+      <section class="mb-6">
+        <h2 class="text-xl font-semibold mb-2">Réalisateur</h2>
+        <p>
+          <LinkPersonne personne={realisateur} />
+        </p>
+      </section>
+    )}
+
+    {scenaristes && (
+      <section class="mb-6">
+        <h2 class="text-xl font-semibold mb-2">Scénariste{scenaristes.length > 1 ? 's' : ''}</h2>
+        <ul class="list-disc pl-6">
+          {scenaristes.map((s) => (
             <li>
-              <strong>{role}</strong>  {acteur && <>: <a href={`/personnes/${acteur.id}`}>{acteur.data.nom}</a></>}
+              <LinkPersonne personne={s} />
             </li>
           ))}
         </ul>
-      </>
-    )
-  }
+      </section>
+    )}
 
+    {roles && (
+      <section class="mb-6">
+        <h2 class="text-xl font-semibold mb-2">Acteurs et Rôles</h2>
+        <ul class="divide-y divide-gray-200">
+          {roles.map(({ role, acteur }) => (
+            <li class="py-2">
+              <strong>{role}</strong>
+              {acteur && (
+                <>
+                  : <a href={`/personnes/${acteur.id}`} class="text-blue-600 hover:underline">
+                    {acteur.data.nom}
+                  </a>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
 
-  <div class="prose">
-    <Content />
+    <section class="prose max-w-none">
+      <Content />
+    </section>
   </div>
 </Layout>

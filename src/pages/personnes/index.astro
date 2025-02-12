@@ -5,15 +5,27 @@ const personnes = await getCollection("personne");
 ---
 
 <Layout pageTitle="Liste des personnes">
-    <h1>Liste des personnes</h1>
-    <ul>{personnes.map((personne) =>
-        <li class="text-red-400">
-            <a href={`/personnes/${personne.id}`}>{personne.data.nom}</a>
-        </li>)}
+  <div class="max-w-4xl mx-auto px-4 py-6">
+    <header class="mb-6">
+      <h1 class="text-3xl font-bold mb-4">Liste des personnes</h1>
+    </header>
+
+    <ul class="list-disc pl-6 space-y-2">
+      {personnes.map((personne) => (
+        <li>
+          <a 
+            href={`/personnes/${personne.id}`} 
+            class="text-blue-600 hover:underline font-medium">
+            {personne.data.nom}
+          </a>
+        </li>
+      ))}
     </ul>
-    <!--
+
+    <!-- 
     <pre>
-        {JSON.stringify(personnes, null, 2)}
+      {JSON.stringify(personnes, null, 2)}
     </pre>
     -->
+  </div>
 </Layout>
